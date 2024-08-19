@@ -50,7 +50,7 @@ pub fn setup(with_account_contracts: bool) -> (&mut TestEnvironment, AztecAddres
     env.advance_block_by(1);
 
     // Deploy Vanhelsing contract
-    let initializer_call_interface_2 = Vanhelsing::interface().constructor(owner, 0, 1, 180, 1, 180);
+    let initializer_call_interface_2 = Vanhelsing::interface().constructor(owner);
     let vanhelsing_contract = env.deploy_self("Vanhelsing").with_public_initializer(initializer_call_interface_2);
     let vanhelsing_contract_address = vanhelsing_contract.to_address();
     env.advance_block_by(1);
@@ -59,7 +59,7 @@ pub fn setup(with_account_contracts: bool) -> (&mut TestEnvironment, AztecAddres
     )
 }
 
-pub fn setup_and_mint(with_account_contracts: bool) -> (&mut TestEnvironment, AztecAddress, AztecAddress, AztecAddress, AztecAddress, AztecAddress, Field) {
+pub fn setup_and_mint(with_account_contracts: bool) -> (&mut TestEnvironment, AztecAddress, AztecAddress, AztecAddress ) {
     // Setup
     let (
         env,
@@ -98,6 +98,6 @@ pub fn setup_and_mint(with_account_contracts: bool) -> (&mut TestEnvironment, Az
     env.call_private_void(redeem_shield_call_interface);
 
     (
-        env, reward_token_contract_address, staking_token_contract_address, vanhelsing_contract_address, owner, recipient, mint_amount
+        env, reward_token_contract_address, staking_token_contract_address, vanhelsing_contract_address
     )
 }
