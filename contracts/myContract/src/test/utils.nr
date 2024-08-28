@@ -5,6 +5,7 @@ use dep::aztec::{
     note::{note_getter::{MAX_NOTES_PER_PAGE, view_notes}, note_viewer_options::NoteViewerOptions},
     oracle::{execution::{get_block_number, get_contract_address}, unsafe_rand::unsafe_rand, storage::storage_read}
 };
+use dep::auth_registry_contract::AuthRegistry;
 
 use dep::token::{types::{token_note::TokenNote, transparent_note::TransparentNote}, Token};
 use crate::Vanhelsing;
@@ -16,7 +17,7 @@ pub fn setup(with_account_contracts: bool) -> (&mut TestEnvironment, AztecAddres
         let owner = env.create_account_contract(1);
         let recipient = env.create_account_contract(2);
         // Deploy canonical auth registry
-        let _auth_registry = env.deploy("./@auth_registry_contract", "AuthRegistry").without_initializer();
+        let _auth_registry = env.deploy("../auth_registry_contract@auth_registry_contract", "AuthRegistry").without_initializer();
         (owner, recipient)
     } else {
         let owner = env.create_account();

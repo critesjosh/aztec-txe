@@ -14,7 +14,7 @@ unconstrained fn create_coffin() {
         reward_token_contract_address,
         staking_token_contract_address,
         vanhelsing_contract_address
-    ) = utils::setup_and_mint(false);
+    ) = utils::setup_and_mint(true);
 
     let create_coffin_call_interface = Vanhelsing::at(vanhelsing_contract_address).createCoffin(
         staking_token_contract_address,
@@ -23,6 +23,5 @@ unconstrained fn create_coffin() {
         1000,
         100
     );
-   
     env.call_public(create_coffin_call_interface);
 }

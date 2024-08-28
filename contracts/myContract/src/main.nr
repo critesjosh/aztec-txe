@@ -1,11 +1,16 @@
 mod test;
+mod coffin;
+mod stake;
 
 contract Vanhelsing {
     use dep::token::Token;
     use dep::aztec::{prelude::{PublicMutable, AztecAddress, Map}};
+    use crate::coffin::{Vampire, Coffin};
 
     #[aztec(storage)]
     struct Storage {
+        coffins: Map<u64, PublicMutable<Coffin>>,
+        coffinId:  PublicMutable<u64>,
         feeTo: PublicMutable<AztecAddress>,
     }
 
@@ -32,7 +37,11 @@ contract Vanhelsing {
             rewardsAmount,
             nonce
         ).call(&mut context);
+        let currentcoffinId = storage.coffinId.read();
 
+        let coffin_storage = storage.coffins.at(currentcoffinId);
+        println(coffin_storage);
+        let mut coffin_data = coffin_storage.read(); // <======== Failed assertion
     }
 
 }
