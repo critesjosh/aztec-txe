@@ -40,7 +40,7 @@ contract Vanhelsing {
         let currentcoffinId = storage.coffinId.read();
 
         let coffin_storage = storage.coffins.at(currentcoffinId);
-        println(coffin_storage);
+        std::println(coffin_storage);
         let mut coffin_data = coffin_storage.read(); // <======== Failed assertion
     }
 
