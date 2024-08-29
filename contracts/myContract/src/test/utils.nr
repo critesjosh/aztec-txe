@@ -17,7 +17,10 @@ pub fn setup(with_account_contracts: bool) -> (&mut TestEnvironment, AztecAddres
         let owner = env.create_account_contract(1);
         let recipient = env.create_account_contract(2);
         // Deploy canonical auth registry
-        let _auth_registry = env.deploy("../auth_registry_contract@auth_registry_contract", "AuthRegistry").without_initializer();
+        let _auth_registry = env.deploy(
+            "../auth_registry_contract@auth_registry_contract",
+            "AuthRegistry"
+        ).without_initializer();
         (owner, recipient)
     } else {
         let owner = env.create_account();
@@ -60,7 +63,7 @@ pub fn setup(with_account_contracts: bool) -> (&mut TestEnvironment, AztecAddres
     )
 }
 
-pub fn setup_and_mint(with_account_contracts: bool) -> (&mut TestEnvironment, AztecAddress, AztecAddress, AztecAddress ) {
+pub fn setup_and_mint(with_account_contracts: bool) -> (&mut TestEnvironment, AztecAddress, AztecAddress, AztecAddress, AztecAddress) {
     // Setup
     let (
         env,
@@ -99,6 +102,6 @@ pub fn setup_and_mint(with_account_contracts: bool) -> (&mut TestEnvironment, Az
     env.call_private_void(redeem_shield_call_interface);
 
     (
-        env, reward_token_contract_address, staking_token_contract_address, vanhelsing_contract_address
+        env, reward_token_contract_address, staking_token_contract_address, vanhelsing_contract_address, owner
     )
 }
