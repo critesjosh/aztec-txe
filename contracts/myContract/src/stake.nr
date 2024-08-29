@@ -5,11 +5,11 @@ struct Stake {
     staker:  AztecAddress,
     stakeID:  u64,
     targetedVampire:  Vampire, // reward pool
-    stakeAmount: U128,
+    stakeAmount: Field,
     start: u64,
     end: u64,
     isActive: bool,
-    awarded:U128
+    awarded:Field
 
 }
 
@@ -26,15 +26,15 @@ impl ToField for Stake {
         self.targetedVampire.wallet.to_field()  +  
         self.targetedVampire.numberOfStakers as Field  +  
         self.targetedVampire.isAlive as Field  +  
-        self.stakeAmount.to_integer()  +   
+        self.stakeAmount  +   
         self.start as Field  + 
         self.end as Field  + 
         self.isActive as Field  + 
-        self.awarded.to_integer()
+        self.awarded
     }
 }
 
-global STAKE_SERIALIZED_LEN: Field = 12;
+global STAKE_SERIALIZED_LEN: Field = 11;
 
 impl Serialize<STAKE_SERIALIZED_LEN> for Stake {
     fn serialize(stake: Stake) -> [Field; STAKE_SERIALIZED_LEN] {
@@ -45,12 +45,11 @@ impl Serialize<STAKE_SERIALIZED_LEN> for Stake {
             stake.targetedVampire.numberOfStakers as Field,
             stake.targetedVampire.feeRate.to_field(),
             stake.targetedVampire.isAlive as Field,
-            stake.stakeAmount.lo,
-            stake.stakeAmount.hi,
+            stake.stakeAmount,
             stake.start as Field,
             stake.end as Field,
             stake.isActive as Field,
-            stake.awarded.to_integer(),
+            stake.awarded,
         ]
     }
 }
@@ -60,11 +59,11 @@ impl Deserialize<STAKE_SERIALIZED_LEN> for Stake {
         let staker = AztecAddress::from_field(fields[0]);
         let stakeID =  fields[1] as u64;
         let vampire = Vampire::deserialize([fields[2], fields[3], fields[4], fields[5]]);
-        let stakeAmount =  U128 { lo: fields[6], hi: fields[7] };
-        let start =  fields[8] as u64;
-        let end = fields[9] as u64;
-        let isActive = fields[10] as bool;
-        let awarded = U128 { lo: fields[10], hi: fields[12] };
+        let stakeAmount =   fields[6];
+        let start =  fields[7] as u64;
+        let end = fields[8] as u64;
+        let isActive = fields[9] as bool;
+        let awarded = fields[10];
 
         Stake {
             staker,
@@ -110,13 +109,13 @@ impl Stake {
         if (awardedAmount > U128::from_integer(0)) {
             let mut feeAmount = 0;
             let feeRate = theCoffin.vampire.feeRate;
-            if ((!feeTo.is_zero()) & (feeRate > U128::from_integer(0))) {
-                let numerator = U128::from_integer(awardedAmount) * feeRate;
+            if ((!feeTo.is_zero()) & (U128::from_integer(feeRate) > U128::from_integer(0))) {
+                let numerator = U128::from_integer(awardedAmount) * U128::from_integer(feeRate);
                 let denominator = 10000;
                 feeAmount = theCoffin.preciseDiv(numerator.to_field(), denominator, 0);
             }
 
-            let rewardsBalance = coffin.rewardsReserve - awardedAmount;
+            let rewardsBalance = U128::from_integer(coffin.rewardsReserve) - awardedAmount;
             //     ERC20 rewardsToken = ERC20(rewardsTokenAddress);
             //     if (feeTo != address(0) && feeAmount > 0) {
             //         require(
@@ -150,6 +149,6 @@ impl Stake {
     }
 
     pub fn getAwardedAmount(&mut self) -> pub U128 {
-        self.awarded / U128::from_integer(1000) // We store awarded multiplied by 1000. Make division to get real amount of rewards
+        U128::from_integer(self.awarded) / U128::from_integer(1000) // We store awarded multiplied by 1000. Make division to get real amount of rewards
     }
 }
